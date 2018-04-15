@@ -6,16 +6,14 @@ require("dotenv").config();
 // Add the code required to import the keys.js file and store it in a variable.
 var keys = require("./keys.js");
 var request = require('request');
-var Twitter = require('twitter');
-var Spotify = require('node-spotify-api');
+var client = require('twitter');
+var spotify = require('node-spotify-api');
 
-var spotify = new Spotify(keys.spotify);
-
-var client = new Twitter(keys.twitter);
+var spotifyKey = new spotify(keys.spotify);
+var client = new client(keys.twitter);
 
 switch (process.argv[2]) {
     case 'my-tweets':
-        console.log("This is supposed to show my last tweets");
         myTweets();
         break;
     case 'spotify-this-song':
@@ -31,42 +29,56 @@ switch (process.argv[2]) {
     default:
 }
 
+// Make it so liri.js can take in each of the following commands:
+// node liri.js my-tweets
+// This will show your last 20 tweets and when they were created at in your terminal/bash window.
 
-
-
-// Make it so liri.js can take in each one of the following commands:
-// * `my-tweets`
 function myTweets() {
-    // node liri.js my-tweets
-    // This will show your last 20 tweets and when they were created at in your terminal/bash window.
-
-}
-// * `spotify-this-song`
-// node liri.js spotify-this-song '<song name here>'
-// This will show the following information about the song in your terminal/bash window
-// Artist(s)
-// The song's name
-// A preview link of the song from Spotify
-// The album that the song is from
-// If no song is provided then your program will default to "The Sign" by Ace of Base.
-// You will utilize the node-spotify-api package in order to retrieve song information from the Spotify API.
-// Like the Twitter API, the Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a client id and client secret:
-// Step One: Visit https://developer.spotify.com/my-applications/#!/
-// Step Two: Either login to your existing Spotify account or create a new one (a free account is fine) and log in.
-// Step Three: Once logged in, navigate to https://developer.spotify.com/my-applications/#!/applications/create to register a new application to be used with the Spotify API. You can fill in whatever you'd like for these fields. When finished, click the "complete" button.
-// Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the node-spotify-api package.
+    var params = {
+        screen_name: "PlayPlay4School",
+        count: 20,
+    };
+    client.get('statuses/user_timeline', params, function (error, tweets, response) {
+        var twits = "";
+        for (var i = 0; i < 20; i++) {
+            twits += tweets[i].text;
+            break;
+        }
+        if (!error) {
+            console.log(twits);
+            console.log("Shows my last 20 tweets");
+        }
+    });
+};
 
 
-var spotify-this - song = spotify.search({
-    type: 'track',
-    query: 'All the Small Things'
-}, function (err, data) {
-    if (err) {
-        return console.log('Error occurred: ' + err);
-    }
+    // * `spotify-this-song`
+    // node liri.js spotify-this-song '<song name here>'
+    // This will show the following information about the song in your terminal/bash window
+    // Artist(s)
+    // The song's name
+    // A preview link of the song from Spotify
+    // The album that the song is from
+    // If no song is provided then your program will default to "The Sign" by Ace of Base.
+    // You will utilize the node-spotify-api package in order to retrieve song information from the Spotify API.
+    // Like the Twitter API, the Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a client id and client secret:
+    // Step One: Visit https://developer.spotify.com/my-applications/#!/
+    // Step Two: Either login to your existing Spotify account or create a new one (a free account is fine) and log in.
+    // Step Three: Once logged in, navigate to https://developer.spotify.com/my-applications/#!/applications/create to register a new application to be used with the Spotify API. You can fill in whatever you'd like for these fields. When finished, click the "complete" button.
+    // Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the node-spotify-api package.
 
-    console.log(spotify - this - song);
-});
+
+    // var spotifyMe = spotify.search({
+    //     type: 'track',
+    //     query: 'All the Small Things'
+    // }, function (err, data) {
+    //     if (err) {
+    //         return console.log('Error occurred: ' + err);
+    //     }
+
+    //     console.log(spotify - this - song);
+    // });
+
 
 // * `movie-this`
 // * `do-what-it-says`
