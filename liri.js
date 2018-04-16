@@ -28,7 +28,7 @@ function runTheProgram() {
         case 'spotify-this-song':
             if (inputString2 === undefined) {
                 // If no song is provided then your program will default to "The Sign" by Ace of Base.
-                var songName = "The Sign";
+                var songName = "The Sign Ace of Base";
                 spotifyRun(songName);
             } else {
                 var songName = inputString2;
@@ -57,7 +57,7 @@ function runTheProgram() {
                 + "\n ---This will show my last 20 tweets and when they were created."
                 + '\n 2) node liri.js spotify-this-song "song name here"'
                 + "\n ---This will show song info"
-                + '\n 3) node node liri.js movie-this "movie name here"'
+                + '\n 3) node liri.js movie-this "movie name here"'
                 + "\n ---This will show movie info"
                 + '\n 4) node liri.js do-what-it-says'
                 + "\n ---This is a surprise"
