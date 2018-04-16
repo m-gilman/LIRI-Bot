@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/m-gilman/LIRI-Bot#readme",
   "dependencies": {
+    "omdb": "^0.8.0",
     "request": "^2.85.0",
     "twitter": "^1.7.1"
   },

@@ -7,6 +7,9 @@ var keys = require("./keys.js");
 var request = require('request');
 var twitter = require('twitter');
 var spotify = require('node-spotify-api');
+var request = require('request');
+var omdb = require('omdb');
+var fs = require("fs");
 
 var spotify = new spotify(keys.spotify);
 var client = new twitter(keys.twitter);
@@ -29,20 +32,21 @@ switch (process.argv[2]) {
     case 'movie-this':
         console.log("This is supposed to do something with a movie");
         break;
-
-    //Honestly, I have no idea what you're asking for here... ??? 
     case 'do-what-it-says':
-        console.log("Do whatever you want, I guess!");
+
+        console.log("surprise!");
         break;
     default:
         console.log(
             "Instructions: run one of the following commands:"
             + "\n 1) node liri.js my-tweets"
-            + "\n This will show my last 20 tweets and when they were created."
-            + "\n 2) node liri.js spotify-this-song <song name here>"
-            + "\n This will show song info"
-            + "\n 3) node ..."
-
+            + "\n ---This will show my last 20 tweets and when they were created."
+            + '\n 2) node liri.js spotify-this-song "song name here"'
+            + "\n ---This will show song info"
+            + '\n 3) node node liri.js movie-this "movie name here"'
+            + "\n ---This will show movie info"
+            + '\n 4) node liri.js do-what-it-says'
+            + "\n ---This is a surprise"
         )
 }
 
@@ -91,9 +95,6 @@ function spotifyRun(songName) {
     });
 }
 
-// * `movie - this`
-// * `do -what - it - says`
-
 // node liri.js movie-this '<movie name here>'
 // This will output the following information to your terminal/bash window:
 //    * Title of the movie.
@@ -116,18 +117,12 @@ function spotifyRun(songName) {
 
 
 
+
 // node liri.js do-what-it-says
-
-
-
-
-// Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
-
-
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-// Feel free to change the text in that document to test out the feature for other commands.
-
-
-
-
-
+function doIt() {
+    fs.readFile("random.txt", "utf8", function (error, data) {
+    var songName = "The Sign";
+    spotifyRun(songName);
+    });
+};
