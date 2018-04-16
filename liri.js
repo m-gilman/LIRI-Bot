@@ -36,8 +36,16 @@ function runTheProgram() {
             }
             break;
         case 'movie-this':
-
-            console.log("This will display info about a movie");
+            if (inputString2 === undefined) {
+                // If no movie is provided the program will default to "Mr. Nobody".
+                var movieName = "Mr. Nobody";
+                console.log('If you haven\'t watched "Mr. Nobody," then you should: http://www.imdb.com/title/tt0485947/'
+                    + '\n It\'s on Netflix!');
+                movieInfo(movieName);
+            } else {
+                var movieName = inputString2;
+                movieInfo(movieName);
+            }
             break;
         case 'do-what-it-says':
             doIt();
@@ -66,7 +74,6 @@ function myTweets() {
     client.get('statuses/user_timeline', params, function (error, tweets, response) {
 
         if (!error) {
-            //I couldn't get the regular for loop to work
             tweets.forEach(function (item) {
                 var tweetDisplay =
                     item.text
@@ -75,9 +82,8 @@ function myTweets() {
                     + "\n ------------------------------- \n -------------------------------"
                 console.log(tweetDisplay);
             })
-
         } else {
-            console.log("Error");
+            return console.log('Error occurred: ' + error);
         }
     });
 };
@@ -95,44 +101,46 @@ function spotifyRun(songName) {
                     + "\n Song Name: " + item.name
                     + "\n Preview Link: " + item.album.external_urls.spotify
                     + "\n Album: " + item.album.name
-                    + "--------------------------------------------------------"
+                    + "\n --------------------------------------------------------"
                 console.log(spotifyDisplay);
-            })
+            });
+        } else {
+            return console.log('Error occurred: ' + error);
+        };
+    });
+};
+
+// node liri.js movie-this '<movie name here>'
+
+
+// You'll use the request package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use trilogy.
+function movieInfo(movieName) {
+    request("https://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
+        if (!error) {
+            var item = JSON.parse(body);
+            var movieDisplay = 
+            "Title of the movie: " + item.Title
+            + "\n Year of Release: " + item.Year
+            + "\n IMDB Rating: " + item.Ratings[0].Value
+            + "\n Rotten Tomatoes Rating: " + item.Ratings[1].Value
+            + "\n Country of Production: " + item.Country
+            + "\n Language: " + item.Language
+            + "\n Plot: " + item.Plot
+            + "\n Actors: " + item.Actors
+            + "\n --------------------------------------------------------"
+        console.log(movieDisplay);
         } else {
             return console.log('Error occurred: ' + error);
         }
     });
 }
 
-// node liri.js movie-this '<movie name here>'
-// This will output the following information to your terminal/bash window:
-//    * Title of the movie.
-//    * Year the movie came out.
-//    * IMDB Rating of the movie.
-//    * Rotten Tomatoes Rating of the movie.
-//    * Country where the movie was produced.
-//    * Language of the movie.
-//    * Plot of the movie.
-//    * Actors in the movie.
-// If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
-
-
-// If you haven't watched "Mr. Nobody," then you should: http://www.imdb.com/title/tt0485947/
-
-// It's on Netflix!
-
-
-// You'll use the request package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use trilogy.
-
-
-
-
 // node liri.js do-what-it-says
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
 function doIt() {
     fs.readFile("random.txt", "utf8", function (error, data) {
         if (error) {
-            return console.log(error);
+            return console.log('Error occurred: ' + error);
         }
         var dataArr = data.split(",");
         inputString1 = dataArr[0];
