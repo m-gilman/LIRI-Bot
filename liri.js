@@ -14,41 +14,49 @@ var fs = require("fs");
 var spotify = new spotify(keys.spotify);
 var client = new twitter(keys.twitter);
 
-//this is my first attempt at using switch statements instead of "if" statements
-switch (process.argv[2]) {
-    case 'my-tweets':
-        myTweets();
-        break;
-    case 'spotify-this-song':
-        if (process.argv[3] === undefined) {
-            // If no song is provided then your program will default to "The Sign" by Ace of Base.
-            var songName = "The Sign";
-            spotifyRun(songName);
-        } else {
-            var songName = process.argv.slice(3).join(' ');
-            spotifyRun(songName);
-        }
-        break;
-    case 'movie-this':
-        console.log("This is supposed to do something with a movie");
-        break;
-    case 'do-what-it-says':
+var inputString1 = process.argv[2];
+var inputString2 = process.argv[3];
 
-        console.log("surprise!");
-        break;
-    default:
-        console.log(
-            "Instructions: run one of the following commands:"
-            + "\n 1) node liri.js my-tweets"
-            + "\n ---This will show my last 20 tweets and when they were created."
-            + '\n 2) node liri.js spotify-this-song "song name here"'
-            + "\n ---This will show song info"
-            + '\n 3) node node liri.js movie-this "movie name here"'
-            + "\n ---This will show movie info"
-            + '\n 4) node liri.js do-what-it-says'
-            + "\n ---This is a surprise"
-        )
-}
+runTheProgram();
+
+function runTheProgram() {
+    //this is my first attempt at using switch statements instead of "if" statements
+    switch (inputString1) {
+        case 'my-tweets':
+            myTweets();
+            break;
+        case 'spotify-this-song':
+            if (inputString2 === undefined) {
+                // If no song is provided then your program will default to "The Sign" by Ace of Base.
+                var songName = "The Sign";
+                spotifyRun(songName);
+            } else {
+                var songName = inputString2;
+                spotifyRun(songName);
+            }
+            break;
+        case 'movie-this':
+
+            console.log("This will display info about a movie");
+            break;
+        case 'do-what-it-says':
+            doIt();
+            break;
+        default:
+            console.log(
+                "Instructions: run one of the following commands:"
+                + "\n 1) node liri.js my-tweets"
+                + "\n ---This will show my last 20 tweets and when they were created."
+                + '\n 2) node liri.js spotify-this-song "song name here"'
+                + "\n ---This will show song info"
+                + '\n 3) node node liri.js movie-this "movie name here"'
+                + "\n ---This will show movie info"
+                + '\n 4) node liri.js do-what-it-says'
+                + "\n ---This is a surprise"
+            );
+    };
+};
+
 
 function myTweets() {
     var params = {
@@ -77,7 +85,8 @@ function myTweets() {
 function spotifyRun(songName) {
     spotify.search({
         type: 'track',
-        query: songName
+        query: songName,
+        limit: 1
     }, function (error, data) {
         if (!error) {
             data.tracks.items.forEach(function (item) {
@@ -122,7 +131,14 @@ function spotifyRun(songName) {
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
 function doIt() {
     fs.readFile("random.txt", "utf8", function (error, data) {
-    var songName = "The Sign";
-    spotifyRun(songName);
+        if (error) {
+            return console.log(error);
+        }
+        var dataArr = data.split(",");
+        inputString1 = dataArr[0];
+        inputString2 = dataArr[1];
+        // console.log(dataArr[0]);
+        // console.log(dataArr[1]);
+        runTheProgram();
     });
 };
