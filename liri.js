@@ -1,4 +1,3 @@
-
 // add code to read and set any environment variables with the dotenv package
 require("dotenv").config();
 
@@ -6,12 +5,13 @@ require("dotenv").config();
 // Add the code required to import the keys.js file and store it in a variable.
 var keys = require("./keys.js");
 var request = require('request');
-var client = require('twitter');
+var twitter = require('twitter');
 var spotify = require('node-spotify-api');
 
 var spotifyKey = new spotify(keys.spotify);
-var client = new client(keys.twitter);
+var client = new twitter(keys.twitter);
 
+//this is my first attempt at using switch statements instead of "if" statements
 switch (process.argv[2]) {
     case 'my-tweets':
         myTweets();
@@ -35,18 +35,24 @@ switch (process.argv[2]) {
 
 function myTweets() {
     var params = {
-        screen_name: "PlayPlay4School",
+        // screen_name: "PlayPlay4School",
         count: 20,
     };
     client.get('statuses/user_timeline', params, function (error, tweets, response) {
-        var twits = "";
-        for (var i = 0; i < 20; i++) {
-            twits += tweets[i].text;
-            break;
-        }
-        if (!error) {
-            console.log(twits);
-            console.log("Shows my last 20 tweets");
+
+        if (!error) {            
+            //I couldn't get the regular for loop to work
+            tweets.forEach(function (item) {
+                var tweetDisplay = 
+                item.text 
+                + "\n"
+                + "Created On: " + item.created_at
+                + "\n ------------------------------- \n -------------------------------"
+                console.log(tweetDisplay);
+            })
+
+        } else {
+            console.log("Error");
         }
     });
 };
