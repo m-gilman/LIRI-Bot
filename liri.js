@@ -8,7 +8,7 @@ var request = require('request');
 var twitter = require('twitter');
 var spotify = require('node-spotify-api');
 
-var spotifyKey = new spotify(keys.spotify);
+var spotify = new spotify(keys.spotify);
 var client = new twitter(keys.twitter);
 
 //this is my first attempt at using switch statements instead of "if" statements
@@ -17,21 +17,34 @@ switch (process.argv[2]) {
         myTweets();
         break;
     case 'spotify-this-song':
-        spotifyRun();
-        console.log("This is supposed to do something with Spotify");
+        if (process.argv[3] === undefined) {
+            // If no song is provided then your program will default to "The Sign" by Ace of Base.
+            var songName = "The Sign";
+            spotifyRun(songName);
+        } else {
+            var songName = process.argv.slice(3).join(' ');
+            spotifyRun(songName);
+        }
         break;
     case 'movie-this':
         console.log("This is supposed to do something with a movie");
         break;
+
+    //Honestly, I have no idea what you're asking for here... ??? 
     case 'do-what-it-says':
         console.log("Do whatever you want, I guess!");
         break;
     default:
-}
+        console.log(
+            "Instructions: run one of the following commands:"
+            + "\n 1) node liri.js my-tweets"
+            + "\n This will show my last 20 tweets and when they were created."
+            + "\n 2) node liri.js spotify-this-song <song name here>"
+            + "\n This will show song info"
+            + "\n 3) node ..."
 
-// Make it so liri.js can take in each of the following commands:
-// node liri.js my-tweets
-// This will show your last 20 tweets and when they were created at in your terminal/bash window.
+        )
+}
 
 function myTweets() {
     var params = {
@@ -40,14 +53,14 @@ function myTweets() {
     };
     client.get('statuses/user_timeline', params, function (error, tweets, response) {
 
-        if (!error) {            
+        if (!error) {
             //I couldn't get the regular for loop to work
             tweets.forEach(function (item) {
-                var tweetDisplay = 
-                item.text 
-                + "\n"
-                + "Created On: " + item.created_at
-                + "\n ------------------------------- \n -------------------------------"
+                var tweetDisplay =
+                    item.text
+                    + "\n"
+                    + "Created On: " + item.created_at
+                    + "\n ------------------------------- \n -------------------------------"
                 console.log(tweetDisplay);
             })
 
@@ -57,37 +70,29 @@ function myTweets() {
     });
 };
 
+function spotifyRun(songName) {
+    spotify.search({
+        type: 'track',
+        query: songName
+    }, function (error, data) {
+        if (!error) {
+            data.tracks.items.forEach(function (item) {
+                var spotifyDisplay =
+                    "Artist Name: " + item.album.artists[0].name
+                    + "\n Song Name: " + item.name
+                    + "\n Preview Link: " + item.album.external_urls.spotify
+                    + "\n Album: " + item.album.name
+                    + "--------------------------------------------------------"
+                console.log(spotifyDisplay);
+            })
+        } else {
+            return console.log('Error occurred: ' + error);
+        }
+    });
+}
 
-    // * `spotify-this-song`
-    // node liri.js spotify-this-song '<song name here>'
-    // This will show the following information about the song in your terminal/bash window
-    // Artist(s)
-    // The song's name
-    // A preview link of the song from Spotify
-    // The album that the song is from
-    // If no song is provided then your program will default to "The Sign" by Ace of Base.
-    // You will utilize the node-spotify-api package in order to retrieve song information from the Spotify API.
-    // Like the Twitter API, the Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a client id and client secret:
-    // Step One: Visit https://developer.spotify.com/my-applications/#!/
-    // Step Two: Either login to your existing Spotify account or create a new one (a free account is fine) and log in.
-    // Step Three: Once logged in, navigate to https://developer.spotify.com/my-applications/#!/applications/create to register a new application to be used with the Spotify API. You can fill in whatever you'd like for these fields. When finished, click the "complete" button.
-    // Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the node-spotify-api package.
-
-
-    // var spotifyMe = spotify.search({
-    //     type: 'track',
-    //     query: 'All the Small Things'
-    // }, function (err, data) {
-    //     if (err) {
-    //         return console.log('Error occurred: ' + err);
-    //     }
-
-    //     console.log(spotify - this - song);
-    // });
-
-
-// * `movie-this`
-// * `do-what-it-says`
+// * `movie - this`
+// * `do -what - it - says`
 
 // node liri.js movie-this '<movie name here>'
 // This will output the following information to your terminal/bash window:
